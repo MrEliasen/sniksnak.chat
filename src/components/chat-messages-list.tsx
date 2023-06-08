@@ -1,5 +1,5 @@
 import { MouseEventHandler, useEffect, useRef, useState } from "react";
-import type DecryptedMessage from "~/pages/api/room/[roomId]";
+import { type DecryptedMessage } from "~/pages/room/[roomId]";
 
 type ChatMessagesListProps = {
     decryptedMessages: DecryptedMessage[],
