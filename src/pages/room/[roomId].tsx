@@ -57,6 +57,28 @@ const Home: NextPage = () => {
     // when messages change, scroll to last message
     const inputField = useRef<HTMLInputElement>(null);
 
+    const setupAutoFetch = () => {
+        if (fetchInterval !== null || autoFetchInterval !== null) {
+            return;
+        }
+
+        const intval = setInterval(() => {
+            if (isInvalidRoom && fetchInterval !== null) {
+                clearInterval(fetchInterval);
+                return;
+            }
+
+            if (chatMessages.isRefetching) {
+                return;
+            }
+
+            chatMessages.refetch();
+        }, 1000);
+
+        setFetchInterval(intval);
+        setAutoFetchInterval(intval);
+    }
+
     const decryptMessage = async (msg: Message): Promise<DecryptedMessage> => {
         const authorSignature = await verify(
             msg.messageSignature,
@@ -216,10 +238,6 @@ const Home: NextPage = () => {
             return;
         }
 
-        if (!chatMessages.data?.messages.length) {
-            return;
-        }
-
         if (!chatMessages.isFetched) {
             return;
         }
@@ -236,6 +254,11 @@ const Home: NextPage = () => {
             return;
         }
 
+        if (chatMessages.data?.messages && !chatMessages.data?.messages.length) {
+            setupAutoFetch();
+            return;
+        }
+
         Promise
             .all((chatMessages.data!.messages).map<Promise<DecryptedMessage>>(decryptMessage))
             .then((messages: DecryptedMessage[]) => {
@@ -244,25 +267,7 @@ const Home: NextPage = () => {
                     ...messages,
                 ]);
 
-                if (fetchInterval !== null || autoFetchInterval !== null) {
-                    return;
-                }
-
-                const intval = setInterval(() => {
-                    if (isInvalidRoom && fetchInterval !== null) {
-                        clearInterval(fetchInterval);
-                        return;
-                    }
-
-                    if (chatMessages.isRefetching) {
-                        return;
-                    }
-
-                    chatMessages.refetch();
-                }, 1000);
-
-                setFetchInterval(intval);
-                setAutoFetchInterval(intval);
+                setupAutoFetch();
             })
             .catch((err) => {
                 setIsInvalidRoom(true);
