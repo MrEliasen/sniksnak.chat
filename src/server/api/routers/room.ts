@@ -1,9 +1,15 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
     createTRPCRouter,
     publicProcedure,
 } from "~/server/api/trpc";
 import { importVerifyKey, verify } from "~/utils/crypto-helper";
+
+const NotFoundError = new TRPCError({
+  code: 'NOT_FOUND',
+  message: 'Room not found',
+});
 
 export const roomRouter = createTRPCRouter({
     createRoom: publicProcedure
@@ -14,6 +20,23 @@ export const roomRouter = createTRPCRouter({
                     publicKey: input.publicKey,
                 },
             });
+        }),
+    getRoom: publicProcedure
+        .input(z.object({
+            roomId: z.string(),
+        }))
+        .query(async ({ ctx, input }) => {
+            const room = await ctx.prisma.room.findFirst({
+                where: {
+                    id: input.roomId,
+                },
+            });
+
+            if (!room) {
+                throw NotFoundError;
+            }
+
+            return room;
         }),
     getMessages: publicProcedure
         .input(z.object({
@@ -51,7 +74,7 @@ export const roomRouter = createTRPCRouter({
             const room = await ctx.prisma.room.findFirst({ where: { id: input.roomId } });
 
             if (!room) {
-                return;
+                throw NotFoundError;
             }
 
             const publicKey = await importVerifyKey(room.publicKey);
@@ -63,7 +86,7 @@ export const roomRouter = createTRPCRouter({
             );
 
             if (!verified) {
-                return;
+                throw NotFoundError;
             }
 
             return await ctx.prisma.message.create({
