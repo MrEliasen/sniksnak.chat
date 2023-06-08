@@ -30,7 +30,7 @@ const ChatMessagesList = ({ decryptedMessages }: ChatMessagesListProps) => {
 
     return (
         <div
-            className="relative flex-1 my-12 w-full overflow-y-auto rounded-lg max-w-4xl bg-gradient-to-b from-[#ffffff00] to-[#cc66ff1a] no-scrollbar"
+            className="relative flex-1 mt-12 mb-6 w-full overflow-y-auto rounded-lg max-w-4xl bg-gradient-to-b from-[#ffffff00] to-[#cc66ff1a] no-scrollbar"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
