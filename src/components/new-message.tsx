@@ -42,7 +42,6 @@ const NewMessageInput = ({
                 <span className="font-bold sm:block hidden">Send</span>
                 <PaperAirplaneIcon className=" pl-1 h-6 w-6 text-white" />
             </button>
-            </button>
         </div>
     );
 };
