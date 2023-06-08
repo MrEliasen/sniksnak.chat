@@ -8,6 +8,7 @@ import Logo from "~/components/logo";
 import Header from "~/components/header";
 import NewMessageInput from "~/components/new-message";
 import { getAuthorKeys, AuthorKeys } from "~/components/author-details";
+import ChatMessagesList from "~/components/chat-messages-list";
 import { fakeWait } from "~/utils/misc";
 import Main from "~/components/main";
 
@@ -16,7 +17,7 @@ type HashData = {
     readonly signingKey: string|null,
     readonly roomId: string,
 };
-type DecryptedMessage = {
+export type DecryptedMessage = {
     readonly id: string,
     readonly message: string,
     readonly createdAt: Date,
@@ -50,6 +51,9 @@ const Home: NextPage = () => {
     const [decryptedMessages, setDecryptedMessages] = useState<DecryptedMessage[]>([]);
     const hashData = getHashData();
 
+    // when messages change, scroll to last message
+    const inputField = useRef<HTMLInputElement>(null);
+
     const decryptMessage = async (msg: Message): Promise<DecryptedMessage> => {
         const authorSignature = await verify(
             msg.messageSignature,
@@ -78,7 +82,7 @@ const Home: NextPage = () => {
     const chatMessages = api.room.getMessages.useQuery({
         roomId: hashData.roomId,
         timestamp: decryptedMessages.at(-1)?.createdAt ?? undefined,
-    });
+    }, { refetchOnMount: false, refetchOnWindowFocus: false});
 
     const loadAuthorKeys = async () => {
         getAuthorKeys().then(async (keys: AuthorKeys) => {
@@ -126,14 +130,6 @@ const Home: NextPage = () => {
         setNewMessage('');
         setIsSendingMessage(false);
     };
-
-    // when messages change, scroll to last message
-    const lastMessage = useRef<HTMLDivElement>(null);
-    const inputField = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        lastMessage?.current?.scrollIntoView({ behavior: "smooth" });
-    }, [decryptedMessages]);
 
     // import crypto key
     useEffect(() => {
@@ -207,24 +203,7 @@ const Home: NextPage = () => {
             <Main>
                 <>
                     <Logo />
-                    <div className="flex-1 my-12 w-full p-2 overflow-y-auto rounded-lg max-w-4xl bg-gradient-to-b from-[#ffffff00] to-[#cc66ff1a] no-scrollbar">
-                        <div className="flex flex-col space-y-4 overflow-none">
-                            {(
-                                decryptedMessages.map((message: DecryptedMessage) => <div
-                                    key={message.id}
-                                    ref={lastMessage}
-                                    className={`flex items-end ${(message.isAuthor ? 'justify-end' : '')}`}
-                                >
-                                    <p
-                                        className={`max-w-most break-words text-sm px-4 py-2 rounded-lg text-white ${(message.isAuthor ? 'bg-snakred rounded-br-none' : 'bg-blue-600 rounded-bl-none')}`}
-                                    >
-                                        {(message.message)}
-                                    </p>
-                                </div>)
-                            )}
-                        </div>
-                    </div>
-
+                    <ChatMessagesList decryptedMessages={decryptedMessages} />
                     <NewMessageInput
                         value={newMessage}
                         disabled={isSendingMessage || sendMessageMutation.isLoading || !cryptoKey || !authorKeys}
