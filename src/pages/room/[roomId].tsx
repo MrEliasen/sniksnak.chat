@@ -207,7 +207,7 @@ const Home: NextPage = () => {
             <Main>
                 <>
                     <Logo />
-                    <div className="flex-1 my-12 w-full overflow-y-auto max-w-4xl">
+                    <div className="flex-1 my-12 w-full p-2 overflow-y-auto rounded-lg max-w-4xl bg-gradient-to-b from-[#ffffff00] to-[#cc66ff1a] no-scrollbar">
                         <div className="flex flex-col space-y-4 overflow-none">
                             {(
                                 decryptedMessages.map((message: DecryptedMessage) => <div
@@ -216,7 +216,7 @@ const Home: NextPage = () => {
                                     className={`flex items-end ${(message.isAuthor ? 'justify-end' : '')}`}
                                 >
                                     <p
-                                        className={`max-w-most break-words text-sm px-4 py-2 rounded-lg rounded-bl-none text-white ${(message.isAuthor ? 'bg-snakred' : 'bg-blue-600')}`}
+                                        className={`max-w-most break-words text-sm px-4 py-2 rounded-lg text-white ${(message.isAuthor ? 'bg-snakred rounded-br-none' : 'bg-blue-600 rounded-bl-none')}`}
                                     >
                                         {(message.message)}
                                     </p>
