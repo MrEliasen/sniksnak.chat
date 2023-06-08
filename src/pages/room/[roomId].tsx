@@ -46,6 +46,7 @@ const Home: NextPage = () => {
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false);
     const [signingKey, setSigningKey] = useState<CryptoKey | null>(null);
     const [authorKeys, setAuthorKeys] = useState<ImportedAuthorKeys | null>(null);
+    const [autoFetchInterval, setAutoFetchInterval] = useState<NodeJS.Timer|null>(null);
     const [decryptedMessages, setDecryptedMessages] = useState<DecryptedMessage[]>([]);
     const hashData = getHashData();
 
@@ -184,14 +185,19 @@ const Home: NextPage = () => {
                     ...messages,
                 ]);
 
+                if (autoFetchInterval !== null) {
+                    return;
+                }
 
-                setInterval(() => {
+                const intval = setInterval(() => {
                     if (chatMessages.isRefetching) {
                         return;
                     }
 
                     chatMessages.refetch();
                 }, 1000);
+
+                setAutoFetchInterval(intval);
             });
     }, [chatMessages.data?.messages, cryptoKey, authorKeys]);
 
