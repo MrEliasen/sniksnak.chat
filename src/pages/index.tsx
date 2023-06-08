@@ -31,7 +31,6 @@ const Home: NextPage = () => {
         const sKey = await generateEncryptionKey();
         const privateStringKey = await exportKey(sKey);
         setEncryptionKey(privateStringKey.privateKey);
-
         await fakeWait(getRandomNumber(400, 600));
 
         // public key
@@ -39,12 +38,10 @@ const Home: NextPage = () => {
         const pKey = await generateSigningKey();
         const exportedSigningKey = await exportSigningKey(pKey);
         setSigningKey(exportedSigningKey);
-
         await fakeWait(getRandomNumber(300, 400));
 
         // create room
         setStatus(`4/4: 💬 Creating chat room, one moment`);
-
         await fakeWait(getRandomNumber(200, 300));
 
         createRoom.mutate({

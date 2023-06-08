@@ -1,4 +1,4 @@
-import { MouseEventHandler, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type DecryptedMessage } from "~/pages/room/[roomId]";
 
 type ChatMessagesListProps = {
@@ -17,7 +17,7 @@ const ChatMessagesList = ({ decryptedMessages }: ChatMessagesListProps) => {
         }
 
         scrollToLastMessage();
-    }, [decryptedMessages]);
+    }, [decryptedMessages, autoScroll]);
 
     const handleMouseEnter = () => {
         setAutoScroll(false);
