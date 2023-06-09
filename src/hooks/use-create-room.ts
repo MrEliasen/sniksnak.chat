@@ -18,7 +18,7 @@ const useCreateRoom = () => {
     const roomApi = api.room.createRoom.useMutation();
 
     const createRoom = async () => {
-        setStatus(`1/4: ⌨️ Loading/creating author signing key pair`);
+        setStatus("1/4: ⌨️ Loading/creating author signing key pair");
         await fakeWait(getRandomNumber(300, 400));
 
         // private key
@@ -38,7 +38,7 @@ const useCreateRoom = () => {
         await fakeWait(getRandomNumber(300, 400));
 
         // create room
-        setStatus(`4/4: 💬 Creating chat room, one moment`);
+        setStatus("4/4: 💬 Creating chat room, one moment");
         await fakeWait(getRandomNumber(200, 300));
 
         roomApi.mutate({
