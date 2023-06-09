@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+env:
+  DATABASE_URL: "mysql://placeholder@placeholder/placeholder"
+  NEXTAUTH_SECRET: "oooOOOoooh-very-secret"
+
 jobs:
   build:
     runs-on: ubuntu-latest
