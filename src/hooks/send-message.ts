@@ -7,7 +7,8 @@ const useSendMessage = (
     cryptoKey: CryptoKey | null,
     signingKey: CryptoKey | null,
     authorKeys: CryptoKeyPair | null,
-    chatMessages: any, inputField: RefObject<HTMLInputElement>
+    chatMessages,
+    inputField: RefObject<HTMLInputElement>
 ) => {
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false);
     const sendMessage = api.room.addMessage.useMutation();
@@ -21,9 +22,9 @@ const useSendMessage = (
 
         setIsSendingMessage(true);
 
-        const payload = await encrypt(formattedText, cryptoKey!);
-        const signature = await sign(`${payload.ciphertext}|${payload.iv}`, signingKey!);
-        const authorSignature = await sign(signature, authorKeys!.privateKey);
+        const payload = await encrypt(formattedText, cryptoKey);
+        const signature = await sign(`${payload.ciphertext}|${payload.iv}`, signingKey);
+        const authorSignature = await sign(signature, authorKeys.privateKey);
 
         sendMessage.mutate({
             roomId: roomId,

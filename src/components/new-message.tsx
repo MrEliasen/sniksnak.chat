@@ -1,12 +1,10 @@
-import { ChangeEventHandler, KeyboardEventHandler, MouseEventHandler, RefObject, useState } from "react";
+import { RefObject, useState } from "react";
 import { PaperAirplaneIcon, Cog8ToothIcon } from '@heroicons/react/24/solid';
 
 interface NewMessageInputProps {
     disabled: boolean,
-    onChange: ChangeEventHandler<HTMLInputElement>,
-    onKeyPress: KeyboardEventHandler,
     inputRef: RefObject<HTMLInputElement>,
-    sendMessage: Function,
+    sendMessage: (message: string) => Promise<boolean>,
 }
 
 const NewMessageInput = ({
@@ -46,6 +44,12 @@ const NewMessageInput = ({
             >
                 <span className="font-bold sm:block hidden">Send</span>
                 <PaperAirplaneIcon className=" pl-1 h-6 w-6 text-white" />
+            </button>
+            <button
+                type="button"
+                className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-300 ease-in-out focus:outline-none"
+            >
+                <Cog8ToothIcon className="h-6 w-6 rounded-lg transition duration-300 ease-in-out text-white hover:text-snakred" />
             </button>
         </div>
     );

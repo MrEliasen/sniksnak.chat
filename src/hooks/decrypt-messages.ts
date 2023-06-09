@@ -1,10 +1,8 @@
 import { Message } from "@prisma/client";
-import { TRPCClientErrorLike } from "@trpc/client";
-import { BuildProcedure } from "@trpc/server";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { decrypt, verify } from "~/utils/crypto-helper";
-import { HashData, ImportedAuthorKeys } from "~/views/chat-room";
+import { ImportedAuthorKeys } from "./import-keys";
 
 export type DecryptedMessage = {
     readonly id: string,
@@ -17,7 +15,7 @@ const decryptMessage = (cryptoKey: CryptoKey, authorKeys: ImportedAuthorKeys) =>
     const authorSignature = await verify(
         msg.messageSignature,
         msg.authorSignature,
-        authorKeys!.publicKey
+        authorKeys.publicKey
     );
 
     const text = await decrypt(
@@ -25,7 +23,7 @@ const decryptMessage = (cryptoKey: CryptoKey, authorKeys: ImportedAuthorKeys) =>
             ciphertext: msg.message,
             iv: msg.iv
         },
-        cryptoKey!
+        cryptoKey
     );
 
     return {
@@ -57,7 +55,7 @@ const useDecryptedMessages = (
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         enabled: appIsReady,
-        retry: (failureCount: number, error: TRPCClientErrorLike<BuildProcedure<any, any, any>>): boolean => {
+        retry: (failureCount: number, error): boolean => {
             if (failureCount < 3 && roomId === '') {
                 return true;
             }
@@ -111,14 +109,14 @@ const useDecryptedMessages = (
         }
 
         Promise
-            .all((chatMessages.data!.messages).map<Promise<DecryptedMessage>>(decryptMessage(cryptoKey, authorKeys)))
+            .all((chatMessages.data.messages).map<Promise<DecryptedMessage>>(decryptMessage(cryptoKey, authorKeys)))
             .then((messages: DecryptedMessage[]) => {
                 setDecryptedMessages((existing) => [
                     ...existing,
                     ...messages,
                 ]);
             })
-            .catch((err) => {
+            .catch(() => {
                 setIsInvalidRoom(true);
             });
     }, [chatMessages.dataUpdatedAt, chatMessages.data, appIsReady]);

@@ -32,7 +32,7 @@ const useCreateRoom = () => {
         await fakeWait(getRandomNumber(200, 300));
 
         roomApi.mutate({
-            publicKey: exportedSigningKey.publicKey!,
+            publicKey: exportedSigningKey.publicKey,
         });
     }
 

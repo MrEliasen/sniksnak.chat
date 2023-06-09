@@ -14,13 +14,6 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { getServerAuthSession } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { createTRPCNext } from '@trpc/next';
-import type { AppRouter } from "~/server/api/root";
-import { loggerLink } from '@trpc/client/links/loggerLink';
-import getConfig from 'next/config';
-import { NextPageContext } from 'next';
-import { httpBatchLink } from '@trpc/client/links/httpBatchLink';
-import { wsLink, createWSClient } from '@trpc/client/links/wsLink';
 
 /**
  * 1. CONTEXT

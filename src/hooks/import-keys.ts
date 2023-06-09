@@ -63,7 +63,7 @@ const useImportKeys = (hashData: HashData, isInvalidRoom: boolean, setIsInvalidR
         loadAuthorKeys().then((keys: ImportedAuthorKeys) => {
             setAuthorKeys(keys);
         });
-    }, [hashData, isInvalidRoom, isLoadingAuthorKeys]);
+    }, [hashData, isInvalidRoom, isLoadingAuthorKeys, setIsInvalidRoom]);
 
     return {
         authorKeys,

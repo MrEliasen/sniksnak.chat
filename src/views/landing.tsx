@@ -13,8 +13,8 @@ const Landing: NextPage = () => {
 
     const { encryptionKey, signingKey, createRoom, roomApi, status } = useCreateRoom();
 
-    if (roomApi.data?.id && roomApi.isSuccess) {
-        router.push(`/room/${roomApi.data?.id}#${encodeURIComponent(encryptionKey)}|${encodeURIComponent(signingKey?.privateKey!)}`);
+    if (roomApi.data?.id && roomApi.isSuccess && signingKey !== null) {
+        router.push(`/room/${roomApi.data?.id}#${encodeURIComponent(encryptionKey)}|${encodeURIComponent(signingKey?.privateKey)}`);
     }
 
     return (

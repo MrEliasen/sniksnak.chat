@@ -137,7 +137,6 @@ export function importEncryptionKey(cryptoKey: string): Promise<CryptoKey> {
 export async function exportKey(cryptoKey: CryptoKey | CryptoKeyPair): Promise<ExportedKey> {
     const isKeyPair = !(cryptoKey instanceof CryptoKey);
     let privateKey: ArrayBuffer | null = null;
-    let publicKey: ArrayBuffer | null = null;
 
     // export the private key
     privateKey = await subtle.exportKey(
@@ -145,31 +144,20 @@ export async function exportKey(cryptoKey: CryptoKey | CryptoKeyPair): Promise<E
         isKeyPair ? cryptoKey.privateKey : cryptoKey
     );
 
-    if (isKeyPair) {
-        // export the public key
-        publicKey = await subtle.exportKey(
-            "raw",
-            cryptoKey.publicKey
-        );
-    }
-
     return {
         privateKey: byteArrayToString(privateKey),
     };
 }
 
 export async function exportSigningKey(cryptoKey: CryptoKeyPair): Promise<ExportedSigningKey> {
-    let privateKey: JsonWebKey;
-    let publicKey: JsonWebKey;
-
     // export the private key
-    privateKey = await subtle.exportKey(
+    const privateKey: JsonWebKey = await subtle.exportKey(
         "jwk",
         cryptoKey.privateKey,
     );
 
     // export the public key
-    publicKey = await subtle.exportKey(
+    const publicKey: JsonWebKey = await subtle.exportKey(
         "jwk",
         cryptoKey.publicKey
     );
