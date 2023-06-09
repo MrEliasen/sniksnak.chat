@@ -99,7 +99,7 @@ export const roomRouter = createTRPCRouter({
                     id: input.roomId,
                 },
                 data: {
-                    lastUpdate: new Date(), 
+                    lastUpdate: new Date(),
                 },
             });
 
