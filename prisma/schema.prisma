@@ -18,6 +18,7 @@ datasource db {
 model Room {
     id          String   @id @default(cuid())
     publicKey   String   @db.LongText
+    lastUpdate  DateTime @default(now())
     messages    Message[]
 }
 

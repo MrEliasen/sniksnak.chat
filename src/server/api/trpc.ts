@@ -14,6 +14,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { getServerAuthSession } from "~/server/auth";
 import { prisma } from "~/server/db";
+import { api } from "~/utils/api";
 
 /**
  * 1. CONTEXT
@@ -85,6 +86,31 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
     },
 });
 
+const cleanUpLottery = t.middleware((opts) => {
+    const { ctx } = opts;
+
+    // lottery, will check and delete old chat rooms
+    const lottery: number = Math.floor(Math.random() * 100) + 1;
+
+    // // 2% chance
+    if (lottery <= 2) {
+        const pastDate: Date = new Date();
+        pastDate.setDate(pastDate.getDate() - 30);
+
+        ctx.prisma.room.deleteMany({
+            where: {
+                lastUpdate: {
+                    lte: pastDate,
+                },
+            },
+        }).then(() => {
+            console.log("Purged expired rooms.");
+        });
+    }
+ 
+    return opts.next(opts);
+});
+
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
  *
@@ -106,7 +132,7 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(cleanUpLottery);
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
