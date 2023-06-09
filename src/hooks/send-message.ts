@@ -7,7 +7,7 @@ const useSendMessage = (
     cryptoKey: CryptoKey | null,
     signingKey: CryptoKey | null,
     authorKeys: CryptoKeyPair | null,
-    chatMessages,
+    chatMessages: any, // I am not sure how to type this one yet
     inputField: RefObject<HTMLInputElement>,
 ) => {
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false);
