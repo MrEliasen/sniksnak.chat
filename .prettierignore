@@ -1,1 +1,4 @@
-prettierignore
+build
+coverage
+package-lock.json
+*.md
