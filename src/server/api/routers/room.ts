@@ -94,6 +94,15 @@ export const roomRouter = createTRPCRouter({
                 throw NotFoundError;
             }
 
+            await ctx.prisma.room.update({
+                where: {
+                    id: input.roomId,
+                },
+                data: {
+                    lastUpdate: new Date(), 
+                },
+            });
+
             return await ctx.prisma.message.create({
                 data: {
                     message: input.ciphertext,
