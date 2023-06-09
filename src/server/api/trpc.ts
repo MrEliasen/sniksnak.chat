@@ -14,7 +14,6 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { getServerAuthSession } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { api } from "~/utils/api";
 
 /**
  * 1. CONTEXT
@@ -97,17 +96,19 @@ const cleanUpLottery = t.middleware((opts) => {
         const pastDate: Date = new Date();
         pastDate.setDate(pastDate.getDate() - 30);
 
-        ctx.prisma.room.deleteMany({
-            where: {
-                lastUpdate: {
-                    lte: pastDate,
+        ctx.prisma.room
+            .deleteMany({
+                where: {
+                    lastUpdate: {
+                        lte: pastDate,
+                    },
                 },
-            },
-        }).then(() => {
-            console.log("Purged expired rooms.");
-        });
+            })
+            .then(() => {
+                console.log("Purged expired rooms.");
+            });
     }
- 
+
     return opts.next(opts);
 });
 
