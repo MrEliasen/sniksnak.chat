@@ -90,7 +90,7 @@ const useDecryptedMessages = (
                 return;
             }
 
-            if (chatMessages.isRefetching) {
+            if (chatMessages.isRefetching && fetchInterval !== null) {
                 return;
             }
 
@@ -109,7 +109,7 @@ const useDecryptedMessages = (
 
         if (
             chatMessages.isLoading ||
-            !chatMessages.data?.messages ||
+            !chatMessages.data ||
             chatMessages.dataUpdatedAt <= lastFetch
         ) {
             return;
@@ -120,6 +120,10 @@ const useDecryptedMessages = (
         if (!isInitialised) {
             setIsInitialised(true);
             setupAutoFetch();
+        }
+
+        if (chatMessages.data.messages.length === 0) {
+            return;
         }
 
         Promise.all(
