@@ -1,6 +1,6 @@
 import { exportSigningKey, generateSigningKey } from "~/utils/crypto-helper";
 
-export type AuthorKeys = { privateKey: string, publicKey: string };
+export type AuthorKeys = { privateKey: string; publicKey: string };
 
 export const getAuthorKeys = async (): Promise<AuthorKeys> => {
     // load author keys, generate if none found
@@ -16,20 +16,18 @@ export const getAuthorKeys = async (): Promise<AuthorKeys> => {
         authorPrivateKey = privateKey;
         authorPublicKey = publicKey;
 
-        localStorage.setItem('privateAuthorKey', privateKey);
-        localStorage.setItem('publicAuthorKey', publicKey);
+        localStorage.setItem("privateAuthorKey", privateKey);
+        localStorage.setItem("publicAuthorKey", publicKey);
     }
 
     return {
         privateKey: authorPrivateKey,
-        publicKey: authorPublicKey
-    }
-}
+        publicKey: authorPublicKey,
+    };
+};
 
 const AuthorDetails = () => {
-    return (
-        <></>
-    );
+    return <></>;
 };
 
 export default AuthorDetails;

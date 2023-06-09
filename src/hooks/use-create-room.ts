@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { api } from "~/utils/api";
-import { ExportedKey, encryptionAlgorithm, exportKey, exportSigningKey, generateEncryptionKey, generateSigningKey, signingAlgorithm } from "~/utils/crypto-helper";
+import {
+    ExportedKey,
+    encryptionAlgorithm,
+    exportKey,
+    exportSigningKey,
+    generateEncryptionKey,
+    generateSigningKey,
+    signingAlgorithm,
+} from "~/utils/crypto-helper";
 import { fakeWait, getRandomNumber } from "~/utils/misc";
 
 const useCreateRoom = () => {
-    const [status, setStatus] = useState<string|null>(null);
-    const [encryptionKey, setEncryptionKey] = useState<string>('');
-    const [signingKey, setSigningKey] = useState<ExportedKey|null>(null);
+    const [status, setStatus] = useState<string | null>(null);
+    const [encryptionKey, setEncryptionKey] = useState<string>("");
+    const [signingKey, setSigningKey] = useState<ExportedKey | null>(null);
     const roomApi = api.room.createRoom.useMutation();
 
     const createRoom = async () => {
@@ -14,7 +22,9 @@ const useCreateRoom = () => {
         await fakeWait(getRandomNumber(300, 400));
 
         // private key
-        setStatus(`2/4: 🤫 Generating 256bit ${encryptionAlgorithm.name} encryption key`);
+        setStatus(
+            `2/4: 🤫 Generating 256bit ${encryptionAlgorithm.name} encryption key`,
+        );
         const sKey = await generateEncryptionKey();
         const privateStringKey = await exportKey(sKey);
         setEncryptionKey(privateStringKey.privateKey);
@@ -34,7 +44,7 @@ const useCreateRoom = () => {
         roomApi.mutate({
             publicKey: exportedSigningKey.publicKey,
         });
-    }
+    };
 
     return {
         createRoom,
@@ -42,7 +52,7 @@ const useCreateRoom = () => {
         signingKey,
         roomApi,
         status,
-    }
+    };
 };
 
 export default useCreateRoom;

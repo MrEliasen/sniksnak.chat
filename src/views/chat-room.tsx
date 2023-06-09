@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { useEffect, useRef, useState } from "react";
-import { useRouter as UseRouter } from 'next/router'; // lint fix..
+import { useRouter as UseRouter } from "next/router"; // lint fix..
 import Logo from "~/components/logo";
 import Header from "~/components/header";
 import NewMessageInput from "~/components/new-message";
@@ -15,18 +15,22 @@ import useImportKeys from "~/hooks/import-keys";
 import useSendMessage from "~/hooks/send-message";
 
 export type HashData = {
-    readonly encryptionKey: string | null,
-    readonly signingKey: string | null,
-    readonly roomId: string | null,
+    readonly encryptionKey: string | null;
+    readonly signingKey: string | null;
+    readonly roomId: string | null;
 };
 
 const getHashData = (): HashData => {
     const { asPath, query } = UseRouter();
-    const hashData = asPath.split('#')?.at(-1)?.split('|') ?? ['', ''];
+    const hashData = asPath.split("#")?.at(-1)?.split("|") ?? ["", ""];
     const encryptionKey = hashData[0] ? decodeURIComponent(hashData[0]) : null;
     const signingKey = hashData[1] ? decodeURIComponent(hashData[1]) : null;
 
-    return { encryptionKey, signingKey, roomId: (query?.roomId ?? null) as string };
+    return {
+        encryptionKey,
+        signingKey,
+        roomId: (query?.roomId ?? null) as string,
+    };
 };
 
 const ChatRoom: NextPage = () => {
@@ -37,28 +41,22 @@ const ChatRoom: NextPage = () => {
     // when messages change, scroll to last message
     const inputField = useRef<HTMLInputElement>(null);
 
-    const {
-        authorKeys,
-        cryptoKey,
-        signingKey,
-    } = useImportKeys(hashData, isInvalidRoom, setIsInvalidRoom);
+    const { authorKeys, cryptoKey, signingKey } = useImportKeys(
+        hashData,
+        isInvalidRoom,
+        setIsInvalidRoom,
+    );
 
-    const { 
-        decryptedMessages,
-        chatMessages,
-    } = useDecryptedMessages(
+    const { decryptedMessages, chatMessages } = useDecryptedMessages(
         hashData.roomId,
         appIsReady,
         isInvalidRoom,
         setIsInvalidRoom,
         authorKeys,
-        cryptoKey
+        cryptoKey,
     );
 
-    const {
-        sendNewMessage,
-        isSendingMessage,
-    } = useSendMessage(
+    const { sendNewMessage, isSendingMessage } = useSendMessage(
         hashData.roomId,
         cryptoKey,
         signingKey,
@@ -67,8 +65,11 @@ const ChatRoom: NextPage = () => {
         inputField,
     );
 
-    const apiRetryHandler = (failureCount: number, error: TRPCClientErrorLike<BuildProcedure<any, any, any>>): boolean => {
-        if (failureCount < 3 && hashData.roomId === '') {
+    const apiRetryHandler = (
+        failureCount: number,
+        error: TRPCClientErrorLike<BuildProcedure<any, any, any>>,
+    ): boolean => {
+        if (failureCount < 3 && hashData.roomId === "") {
             return true;
         }
 
@@ -81,15 +82,18 @@ const ChatRoom: NextPage = () => {
     };
 
     // RPC calls
-    const roomDetails = api.room.getRoom.useQuery({
-        roomId: hashData.roomId ?? '',
-    }, {
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-        retryDelay: 250,
-        enabled: !!hashData.roomId,
-        retry: apiRetryHandler,
-    });
+    const roomDetails = api.room.getRoom.useQuery(
+        {
+            roomId: hashData.roomId ?? "",
+        },
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            retryDelay: 250,
+            enabled: !!hashData.roomId,
+            retry: apiRetryHandler,
+        },
+    );
 
     // once all the details are loaded
     useEffect(() => {
@@ -105,7 +109,13 @@ const ChatRoom: NextPage = () => {
         }
 
         setAppIsReady(true);
-    }, [appIsReady, isInvalidRoom, cryptoKey, authorKeys, roomDetails?.data?.id]);
+    }, [
+        appIsReady,
+        isInvalidRoom,
+        cryptoKey,
+        authorKeys,
+        roomDetails?.data?.id,
+    ]);
 
     return (
         <>
@@ -113,33 +123,44 @@ const ChatRoom: NextPage = () => {
             <Main>
                 <>
                     <Logo />
-                    {
-                        isInvalidRoom ?
-                        <div className="rounded-md bg-yellow-50 p-4 mt-12">
+                    {isInvalidRoom ? (
+                        <div className="mt-12 rounded-md bg-yellow-50 p-4">
                             <div className="flex">
                                 <div className="flex-shrink-0">
-                                    <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400" aria-hidden="true" />
+                                    <ExclamationTriangleIcon
+                                        className="h-5 w-5 text-yellow-400"
+                                        aria-hidden="true"
+                                    />
                                 </div>
                                 <div className="ml-3">
-                                    <h3 className="text-sm font-medium text-yellow-800">Invalid Room</h3>
+                                    <h3 className="text-sm font-medium text-yellow-800">
+                                        Invalid Room
+                                    </h3>
                                     <div className="mt-2 text-sm text-yellow-700">
                                         <p>
-                                            This room does not exist or the details are incorrect.
+                                            This room does not exist or the
+                                            details are incorrect.
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        :
+                    ) : (
                         <>
-                            <ChatMessagesList decryptedMessages={decryptedMessages} />
+                            <ChatMessagesList
+                                decryptedMessages={decryptedMessages}
+                            />
                             <NewMessageInput
-                                disabled={isSendingMessage || !cryptoKey || !authorKeys}
+                                disabled={
+                                    isSendingMessage ||
+                                    !cryptoKey ||
+                                    !authorKeys
+                                }
                                 inputRef={inputField}
                                 sendMessage={sendNewMessage}
                             />
                         </>
-                    }
+                    )}
                 </>
             </Main>
         </>

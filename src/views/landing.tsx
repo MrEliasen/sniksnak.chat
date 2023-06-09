@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
 import Header from "~/components/header";
 import Logo from "~/components/logo";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import AuthorDetails from "~/components/author-details";
 import FeatureHighlight from "~/components/features-highlight";
 import CreateRoom from "~/components/create-room";
@@ -11,10 +11,15 @@ import useCreateRoom from "~/hooks/use-create-room";
 const Landing: NextPage = () => {
     const router = useRouter();
 
-    const { encryptionKey, signingKey, createRoom, roomApi, status } = useCreateRoom();
+    const { encryptionKey, signingKey, createRoom, roomApi, status } =
+        useCreateRoom();
 
     if (roomApi.data?.id && roomApi.isSuccess && signingKey !== null) {
-        router.push(`/room/${roomApi.data?.id}#${encodeURIComponent(encryptionKey)}|${encodeURIComponent(signingKey?.privateKey)}`);
+        router.push(
+            `/room/${roomApi.data?.id}#${encodeURIComponent(
+                encryptionKey,
+            )}|${encodeURIComponent(signingKey?.privateKey)}`,
+        );
     }
 
     return (
@@ -25,7 +30,11 @@ const Landing: NextPage = () => {
                     <Logo />
                     <FeatureHighlight />
 
-                    <CreateRoom isDisable={status !== null} status={status} createRoomAction={createRoom} />
+                    <CreateRoom
+                        isDisable={status !== null}
+                        status={status}
+                        createRoomAction={createRoom}
+                    />
 
                     <AuthorDetails />
                 </div>

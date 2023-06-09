@@ -1,16 +1,20 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getAuthorKeys, AuthorKeys } from "~/components/author-details";
-import { importEncryptionKey, importSigningKey, importVerifyKey } from "~/utils/crypto-helper";
+import {
+    importEncryptionKey,
+    importSigningKey,
+    importVerifyKey,
+} from "~/utils/crypto-helper";
 import { fakeWait } from "~/utils/misc";
 import { HashData } from "~/views/chat-room";
 
 export type ImportedAuthorKeys = {
-    privateKey: CryptoKey,
-    publicKey: CryptoKey,
+    privateKey: CryptoKey;
+    publicKey: CryptoKey;
 };
 
 const loadAuthorKeys = async (): Promise<ImportedAuthorKeys> => {
-    const keys: AuthorKeys = await getAuthorKeys()
+    const keys: AuthorKeys = await getAuthorKeys();
 
     if (!keys.privateKey || !keys.publicKey) {
         await fakeWait(200);
@@ -23,13 +27,20 @@ const loadAuthorKeys = async (): Promise<ImportedAuthorKeys> => {
     return { privateKey, publicKey };
 };
 
-const useImportKeys = (hashData: HashData, isInvalidRoom: boolean, setIsInvalidRoom: Dispatch<SetStateAction<boolean>>) => {
-    const [isLoadingAuthorKeys, setIsLoadingAuthorKeys] = useState<boolean>(false);
-    const [authorKeys, setAuthorKeys] = useState<ImportedAuthorKeys | null>(null);
+const useImportKeys = (
+    hashData: HashData,
+    isInvalidRoom: boolean,
+    setIsInvalidRoom: Dispatch<SetStateAction<boolean>>,
+) => {
+    const [isLoadingAuthorKeys, setIsLoadingAuthorKeys] =
+        useState<boolean>(false);
+    const [authorKeys, setAuthorKeys] = useState<ImportedAuthorKeys | null>(
+        null,
+    );
     const [cryptoKey, setCryptoKey] = useState<CryptoKey | null>(null);
     const [signingKey, setSigningKey] = useState<CryptoKey | null>(null);
 
-     // import crypto key
+    // import crypto key
     useEffect(() => {
         if (isInvalidRoom) {
             return;
@@ -46,15 +57,15 @@ const useImportKeys = (hashData: HashData, isInvalidRoom: boolean, setIsInvalidR
         setIsLoadingAuthorKeys(true);
 
         try {
-            importEncryptionKey(hashData.encryptionKey)
-                .then((key: CryptoKey) => {
+            importEncryptionKey(hashData.encryptionKey).then(
+                (key: CryptoKey) => {
                     setCryptoKey(key);
-                });
+                },
+            );
 
-            importSigningKey(hashData.signingKey)
-                .then((key: CryptoKey) => {
-                    setSigningKey(key);
-                });
+            importSigningKey(hashData.signingKey).then((key: CryptoKey) => {
+                setSigningKey(key);
+            });
         } catch (err) {
             setIsInvalidRoom(true);
             return;
@@ -69,7 +80,7 @@ const useImportKeys = (hashData: HashData, isInvalidRoom: boolean, setIsInvalidR
         authorKeys,
         cryptoKey,
         signingKey,
-    }
-}
+    };
+};
 
 export default useImportKeys;

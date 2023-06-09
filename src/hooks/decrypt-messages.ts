@@ -5,34 +5,36 @@ import { decrypt, verify } from "~/utils/crypto-helper";
 import { ImportedAuthorKeys } from "./import-keys";
 
 export type DecryptedMessage = {
-    readonly id: string,
-    readonly message: string,
-    readonly createdAt: Date,
-    readonly isAuthor: boolean,
+    readonly id: string;
+    readonly message: string;
+    readonly createdAt: Date;
+    readonly isAuthor: boolean;
 };
 
-const decryptMessage = (cryptoKey: CryptoKey, authorKeys: ImportedAuthorKeys) => async (msg: Message): Promise<DecryptedMessage> => {
-    const authorSignature = await verify(
-        msg.messageSignature,
-        msg.authorSignature,
-        authorKeys.publicKey
-    );
+const decryptMessage =
+    (cryptoKey: CryptoKey, authorKeys: ImportedAuthorKeys) =>
+    async (msg: Message): Promise<DecryptedMessage> => {
+        const authorSignature = await verify(
+            msg.messageSignature,
+            msg.authorSignature,
+            authorKeys.publicKey,
+        );
 
-    const text = await decrypt(
-        {
-            ciphertext: msg.message,
-            iv: msg.iv
-        },
-        cryptoKey
-    );
+        const text = await decrypt(
+            {
+                ciphertext: msg.message,
+                iv: msg.iv,
+            },
+            cryptoKey,
+        );
 
-    return {
-        id: msg.id,
-        message: text,
-        createdAt: msg.createdAt,
-        isAuthor: authorSignature,
-    }
-};
+        return {
+            id: msg.id,
+            message: text,
+            createdAt: msg.createdAt,
+            isAuthor: authorSignature,
+        };
+    };
 
 const useDecryptedMessages = (
     roomId: string | null,
@@ -43,31 +45,39 @@ const useDecryptedMessages = (
     cryptoKey: CryptoKey | null,
 ) => {
     const [lastFetch, setLastFetch] = useState<number>(0);
-    const [fetchInterval, setFetchInterval] = useState<NodeJS.Timer | null>(null);
-    const [autoFetchInterval, setAutoFetchInterval] = useState<NodeJS.Timer | null>(null);
-    const [decryptedMessages, setDecryptedMessages] = useState<DecryptedMessage[]>([]);
+    const [fetchInterval, setFetchInterval] = useState<NodeJS.Timer | null>(
+        null,
+    );
+    const [autoFetchInterval, setAutoFetchInterval] =
+        useState<NodeJS.Timer | null>(null);
+    const [decryptedMessages, setDecryptedMessages] = useState<
+        DecryptedMessage[]
+    >([]);
     const [isInitialised, setIsInitialised] = useState<boolean>(false);
 
-    const chatMessages = api.room.getMessages.useQuery({
-        roomId: roomId ?? '',
-        timestamp: decryptedMessages.at(-1)?.createdAt ?? undefined,
-    }, {
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-        enabled: appIsReady,
-        retry: (failureCount: number, error): boolean => {
-            if (failureCount < 3 && roomId === '') {
-                return true;
-            }
-
-            if (error.data?.code === "NOT_FOUND") {
-                setIsInvalidRoom(true);
-                return false;
-            }
-
-            return true;
+    const chatMessages = api.room.getMessages.useQuery(
+        {
+            roomId: roomId ?? "",
+            timestamp: decryptedMessages.at(-1)?.createdAt ?? undefined,
         },
-    });
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: appIsReady,
+            retry: (failureCount: number, error): boolean => {
+                if (failureCount < 3 && roomId === "") {
+                    return true;
+                }
+
+                if (error.data?.code === "NOT_FOUND") {
+                    setIsInvalidRoom(true);
+                    return false;
+                }
+
+                return true;
+            },
+        },
+    );
 
     const setupAutoFetch = () => {
         if (fetchInterval !== null || autoFetchInterval !== null) {
@@ -89,7 +99,7 @@ const useDecryptedMessages = (
 
         setFetchInterval(intval);
         setAutoFetchInterval(intval);
-    }
+    };
 
     // when we have new messages, load them
     useEffect(() => {
@@ -97,7 +107,11 @@ const useDecryptedMessages = (
             return;
         }
 
-        if (chatMessages.isLoading || !chatMessages.data?.messages || chatMessages.dataUpdatedAt <= lastFetch) {
+        if (
+            chatMessages.isLoading ||
+            !chatMessages.data?.messages ||
+            chatMessages.dataUpdatedAt <= lastFetch
+        ) {
             return;
         }
 
@@ -108,13 +122,13 @@ const useDecryptedMessages = (
             setupAutoFetch();
         }
 
-        Promise
-            .all((chatMessages.data.messages).map<Promise<DecryptedMessage>>(decryptMessage(cryptoKey, authorKeys)))
+        Promise.all(
+            chatMessages.data.messages.map<Promise<DecryptedMessage>>(
+                decryptMessage(cryptoKey, authorKeys),
+            ),
+        )
             .then((messages: DecryptedMessage[]) => {
-                setDecryptedMessages((existing) => [
-                    ...existing,
-                    ...messages,
-                ]);
+                setDecryptedMessages((existing) => [...existing, ...messages]);
             })
             .catch(() => {
                 setIsInvalidRoom(true);
@@ -124,7 +138,7 @@ const useDecryptedMessages = (
     return {
         decryptedMessages,
         chatMessages,
-    }
+    };
 };
 
 export default useDecryptedMessages;

@@ -8,7 +8,7 @@ const useSendMessage = (
     signingKey: CryptoKey | null,
     authorKeys: CryptoKeyPair | null,
     chatMessages,
-    inputField: RefObject<HTMLInputElement>
+    inputField: RefObject<HTMLInputElement>,
 ) => {
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false);
     const sendMessage = api.room.addMessage.useMutation();
@@ -16,14 +16,24 @@ const useSendMessage = (
     const sendNewMessage = async (message: string): Promise<boolean> => {
         const formattedText = message.trim();
 
-        if (roomId === null || !cryptoKey || !signingKey || !authorKeys || isSendingMessage || formattedText === '') {
+        if (
+            roomId === null ||
+            !cryptoKey ||
+            !signingKey ||
+            !authorKeys ||
+            isSendingMessage ||
+            formattedText === ""
+        ) {
             return false;
         }
 
         setIsSendingMessage(true);
 
         const payload = await encrypt(formattedText, cryptoKey);
-        const signature = await sign(`${payload.ciphertext}|${payload.iv}`, signingKey);
+        const signature = await sign(
+            `${payload.ciphertext}|${payload.iv}`,
+            signingKey,
+        );
         const authorSignature = await sign(signature, authorKeys.privateKey);
 
         sendMessage.mutate({
@@ -38,7 +48,6 @@ const useSendMessage = (
         return true;
     };
 
-
     // pull messages when message is sent
     useEffect(() => {
         if (sendMessage.isLoading) {
@@ -52,7 +61,7 @@ const useSendMessage = (
     return {
         sendNewMessage,
         isSendingMessage,
-    }
-}
+    };
+};
 
 export default useSendMessage;

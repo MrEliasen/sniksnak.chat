@@ -1,14 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import {
-    createTRPCRouter,
-    publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { importVerifyKey, verify } from "~/utils/crypto-helper";
 
 const NotFoundError = new TRPCError({
-  code: 'NOT_FOUND',
-  message: 'Room not found',
+    code: "NOT_FOUND",
+    message: "Room not found",
 });
 
 export const roomRouter = createTRPCRouter({
@@ -22,9 +19,11 @@ export const roomRouter = createTRPCRouter({
             });
         }),
     getRoom: publicProcedure
-        .input(z.object({
-            roomId: z.string(),
-        }))
+        .input(
+            z.object({
+                roomId: z.string(),
+            }),
+        )
         .query(async ({ ctx, input }) => {
             const room = await ctx.prisma.room.findFirst({
                 where: {
@@ -39,10 +38,12 @@ export const roomRouter = createTRPCRouter({
             return room;
         }),
     getMessages: publicProcedure
-        .input(z.object({
-            roomId: z.string(),
-            timestamp: z.date().optional(),
-        }))
+        .input(
+            z.object({
+                roomId: z.string(),
+                timestamp: z.date().optional(),
+            }),
+        )
         .query(({ ctx, input }) => {
             return ctx.prisma.room.findFirst({
                 where: {
@@ -56,22 +57,26 @@ export const roomRouter = createTRPCRouter({
                             },
                         },
                         orderBy: {
-                            createdAt: 'asc',
+                            createdAt: "asc",
                         },
                     },
                 },
             });
         }),
     addMessage: publicProcedure
-        .input(z.object({
-            roomId: z.string(),
-            ciphertext: z.string(),
-            iv: z.string(),
-            messageSignature: z.string(),
-            authorSignature: z.string(),
-        }))
+        .input(
+            z.object({
+                roomId: z.string(),
+                ciphertext: z.string(),
+                iv: z.string(),
+                messageSignature: z.string(),
+                authorSignature: z.string(),
+            }),
+        )
         .mutation(async ({ ctx, input }) => {
-            const room = await ctx.prisma.room.findFirst({ where: { id: input.roomId } });
+            const room = await ctx.prisma.room.findFirst({
+                where: { id: input.roomId },
+            });
 
             if (!room) {
                 throw NotFoundError;
@@ -82,7 +87,7 @@ export const roomRouter = createTRPCRouter({
             const verified = await verify(
                 `${input.ciphertext}|${input.iv}`,
                 input.messageSignature,
-                publicKey
+                publicKey,
             );
 
             if (!verified) {
