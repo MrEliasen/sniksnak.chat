@@ -9,8 +9,8 @@
         "lint": "next lint",
         "start": "next start",
         "typecheck": "tsc --noEmit",
-        "format": "prettier --check --ignore-path .gitignore .",
-        "format:fix": "prettier --write --ignore-path .gitignore ."
+        "format": "prettier --check .",
+        "format:fix": "prettier --write ."
     },
     "dependencies": {
         "@heroicons/react": "^2.0.18",
