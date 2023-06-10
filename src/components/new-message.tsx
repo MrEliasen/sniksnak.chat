@@ -1,5 +1,5 @@
 import { RefObject, useState } from "react";
-import { PaperAirplaneIcon, Cog8ToothIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 
 interface NewMessageInputProps {
     disabled: boolean;
