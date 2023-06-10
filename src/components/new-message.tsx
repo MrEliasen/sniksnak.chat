@@ -46,12 +46,6 @@ const NewMessageInput = ({
                 <span className="hidden font-bold sm:block">Send</span>
                 <PaperAirplaneIcon className=" h-6 w-6 pl-1 text-white" />
             </button>
-            <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-300 ease-in-out focus:outline-none"
-            >
-                <Cog8ToothIcon className="h-6 w-6 rounded-lg text-white transition duration-300 ease-in-out hover:text-snakred" />
-            </button>
         </div>
     );
 };
