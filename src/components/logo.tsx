@@ -5,7 +5,7 @@ const Logo = () => {
     return (
         <div>
             <Link href="/">
-                <h1 className="text-7xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+                <h1 className="text-6xl font-extrabold tracking-tight text-white sm:text-[5rem]">
                     <SnikSnak />
                 </h1>
             </Link>
