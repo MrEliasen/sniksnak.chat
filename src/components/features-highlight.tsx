@@ -4,7 +4,7 @@ const FeatureHighlight = () => {
     return (
         <div className="mx-auto max-w-2xl lg:max-w-5xl">
             <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
-                <div className="relative px-4">
+                <div className="relative px-2">
                     <dt className="text-xl font-semibold text-gray-300">
                         Zero-knowledge encryption
                     </dt>
@@ -15,7 +15,7 @@ const FeatureHighlight = () => {
                     </dd>
                 </div>
 
-                <div className="relative px-4">
+                <div className="relative px-2">
                     <dt className="text-xl font-semibold text-gray-300">
                         Completely anonymous
                     </dt>
@@ -26,7 +26,7 @@ const FeatureHighlight = () => {
                     </dd>
                 </div>
 
-                <div className="relative px-4">
+                <div className="relative px-2">
                     <dt className="text-xl font-semibold text-gray-300">
                         Open Source
                     </dt>
@@ -46,8 +46,8 @@ const FeatureHighlight = () => {
                         Auto Deletion
                     </dt>
                     <dd className="mt-2 text-base text-gray-300">
-                        Chat rooms and all of its messages automatically delete
-                        after 30 days inactivity (since last posted message).
+                        Chat rooms, and all of its messages, will automatically
+                        get deleted after 30 days of inactivity (since last message).
                     </dd>
                 </div>
             </dl>
