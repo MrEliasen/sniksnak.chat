@@ -6,7 +6,7 @@ const Logo = () => {
         <div>
             <Link href="/">
                 <h1 className="text-6xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-                    <SnikSnak />
+                    <SnikSnak bold={false} />
                 </h1>
             </Link>
             <p className="text-right text-sm text-gray-300">

@@ -2,7 +2,7 @@ type SnikSnakProps = {
     bold?: boolean;
 };
 
-const SnikSnak = ({ bold }: SnikSnakProps) => {
+const SnikSnak = ({ bold = true }: SnikSnakProps) => {
     return (
         <>
             <span className={`${bold ? "font-bold" : ""}`}>Snik</span>{" "}
