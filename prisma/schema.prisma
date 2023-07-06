@@ -6,18 +6,15 @@ generator client {
 }
 
 datasource db {
-    provider = "mysql"
+    provider = "postgresql"
     relationMode = "prisma"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
+    directUrl = env("DATABASE_DIRECT_URL")
 }
 
 model Room {
     id          String   @id @default(cuid())
-    publicKey   String   @db.LongText
+    publicKey   String   @db.Text
     lastUpdate  DateTime @default(now())
     messages    Message[]
 }
@@ -25,10 +22,10 @@ model Room {
 model Message {
     id                  String   @id @default(cuid())
     createdAt           DateTime @default(now())
-    message             String   @db.LongText
-    messageSignature    String   @db.LongText
-    authorSignature     String   @db.LongText
-    iv                  String   @db.LongText
+    message             String   @db.Text
+    messageSignature    String   @db.Text
+    authorSignature     String   @db.Text
+    iv                  String   @db.Text
     roomId              String
     room                Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
